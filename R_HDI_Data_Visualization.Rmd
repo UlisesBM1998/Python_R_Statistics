@@ -1,0 +1,29 @@
+---
+title: "Comparing the Latam HDI versus rest of the countries"
+author: "Ulises Jose Bustamante Mora"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+Importing libraries
+```{r}
+library(ggplot2)
+library(data.table)
+```
+
+Importing the data set
+```{r}
+df = fread("HDI.csv", drop = 1)
+head(df)
+```
+
+#Making the plot
+```{r}
+g1 = ggplot(df, aes(x = CPI, y = HDI, color = Region))+ geom_point(size = 4, shape = 1)
+g2 = g1 + geom_smooth(aes(group = 1), method = "lm", formula = y~log(x), se = F, color = "red")
+mainCountries = c("United States", "Canada", "Brazil", "Colombia", "Uruguay", "Costa Rica", "Nicaragua", "Panama", "El Salvador", "Haiti", "Jamaica", "Mexico", "Honduras", "Venezuela", "Peru", "Argentina", "Chile")
+g3 = g2 + geom_text(aes(label = Country), color = "black", data = subset(df, Country %in% mainCountries), check_overlap = T)
+g4 = g3 + scale_x_continuous(limits = c(0.9,10.5), breaks = 1:10)
+print(g4 + theme_minimal())
+```
+
